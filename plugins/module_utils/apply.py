@@ -131,7 +131,7 @@ def k8s_apply(resource, definition, **kwargs):
     existing, desired = apply_object(resource, definition)
     server_side = kwargs.get("server_side", False)
     if server_side:
-        body = json.dumps(definition).encode()
+        body = definition
         # server_side_apply is forces content_type to 'application/apply-patch+yaml'
         return resource.server_side_apply(
             body=body,
@@ -139,6 +139,7 @@ def k8s_apply(resource, definition, **kwargs):
             namespace=definition["metadata"].get("namespace"),
             force_conflicts=kwargs.get("force_conflicts"),
             field_manager=kwargs.get("field_manager"),
+            dry_run=kwargs.get("dry_run"),
         )
     if not existing:
         return resource.create(
